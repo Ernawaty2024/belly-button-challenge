@@ -8,8 +8,6 @@ function buildMetadata(sample) {
     // Filter the metadata for the object with the desired sample number
     let filtered_metadata = metadata.filter(sampleObj => sampleObj.id == sample);
     let desired_sample = filtered_metadata[0];
-
-    console.log(desired_sample)
     
     // Use d3 to select the panel with id of `#sample-metadata`
     let panel = d3.select('#sample-metadata');
@@ -20,7 +18,7 @@ function buildMetadata(sample) {
     // Inside a loop, you will need to use d3 to append new
     // tags for each key-value in the filtered metadata.
     Object.entries(desired_sample).forEach(([key,value]) =>{
-      panel.append("h6").text('${key.toUpperCase()} : ${value}');
+      panel.append("h6").text(`${key.toUpperCase()} : ${value}`);
     });
   });
 }
@@ -44,12 +42,11 @@ function buildCharts(sample) {
     // Build a Bubble Chart
     let bubbleLayout = {
       title : "Bacteria Cultures Per Sample",
-      margin: {t : 0},
       hovermode: "closest",
       xaxis: {title : "OTU ID"},
-      margin: {t:30},
-      yaxis: {title : "Number of Bacteria"},
-      margin : {r:30}
+      yaxis: {title: "Number of Bacteria"},
+      height: 600,
+      width : 800
     };
 
     let bubbleData = [{
@@ -65,48 +62,64 @@ function buildCharts(sample) {
     }];
   
     // Render the Bubble Chart
-    plotly.newPlot("bubble", bubbleData, bubbleLayout);
+    Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
-    
+    let yticks = otu_ids.slice(0,10).map(otuID => `OTU ${otuID}`).reverse();
 
     // Build a Bar Chart
     // Don't forget to slice and reverse the input data appropriately
-
+    let barData = [{
+      y : yticks,
+      x: sample_values.slice(0,10).reverse(),
+      text:otu_labels.slice(0,10).reverse(),
+      type: "bar",
+      orientation: "h"
+    }];
+    
+    let barLayout = {
+      title: "Top 10 Bacteria Cultures Found",
+      height : 600,
+      width : 800,
+      xaxis: {title:"Number of Bacteria"}
+    };
 
     // Render the Bar Chart
-
+    Plotly.newPlot("bar", barData, barLayout);
   });
 }
 
 // Function to run on page load
-//function init() {
- // d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
+function init() {
+d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // Get the names field
-
+    let sampleNames = data.names;
 
     // Use d3 to select the dropdown with id of `#selDataset`
-
+    let selector = d3.select(`#selDataset`);
 
     // Use the list of sample names to populate the select options
     // Hint: Inside a loop, you will need to use d3 to append a new
     // option for each sample name.
-
+    sampleNames.forEach((sample) => {selector.append("option").text(sample).property("value", sample);
+    });
 
     // Get the first sample from the list
-
+    let firstSample = sampleNames[0];
 
     // Build charts and metadata panel with the first sample
-
-  //});
-//}
+    buildCharts(firstSample);
+    buildMetadata(firstSample);
+  });
+}
 
 // Function for event listener
-//function optionChanged(newSample) {
+function optionChanged(newSample) {
   // Build charts and metadata panel each time a new sample is selected
-
-//}
+  buildCharts(newSample);
+  buildMetadata(newSample);
+}
 
 // Initialize the dashboard
-//init();
+init();
