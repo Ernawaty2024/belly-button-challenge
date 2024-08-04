@@ -3,20 +3,25 @@ function buildMetadata(sample) {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // get the metadata field
-
+    let metadata = data.metadata;
 
     // Filter the metadata for the object with the desired sample number
+    let filtered_metadata = metadata.filter(sampleObj => sampleObj.id == sample);
+    let desired_sample = filtered_metadata[0];
 
-
+    console.log(desired_sample)
+    
     // Use d3 to select the panel with id of `#sample-metadata`
-
+    let panel = d3.select('#sample-metadata');
 
     // Use `.html("") to clear any existing metadata
-
+    panel.html("");
 
     // Inside a loop, you will need to use d3 to append new
     // tags for each key-value in the filtered metadata.
-
+    Object.entries(desired_sample).forEach(([key,value]) =>{
+      panel.append("h6").text('${key.toUpperCase()} : ${value}');
+    });
   });
 }
 
@@ -25,22 +30,45 @@ function buildCharts(sample) {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // Get the samples field
-
+    let samples = data.samples;
 
     // Filter the samples for the object with the desired sample number
-
+    let filtered_samples = samples.filter(sampleObj =>sampleObj.id == sample);
+    let desired_sample = filtered_samples[0];
 
     // Get the otu_ids, otu_labels, and sample_values
-
+    let otu_ids = desired_sample.otu_ids;
+    let otu_labels = desired_sample.otu_labels;
+    let sample_values = desired_sample.sample_values;
 
     // Build a Bubble Chart
+    let bubbleLayout = {
+      title : "Bacteria Cultures Per Sample",
+      margin: {t : 0},
+      hovermode: "closest",
+      xaxis: {title : "OTU ID"},
+      margin: {t:30},
+      yaxis: {title : "Number of Bacteria"},
+      margin : {r:30}
+    };
 
-
+    let bubbleData = [{
+      x: otu_ids,
+      y: sample_values,
+      text: otu_labels,
+      mode: "markers",
+      marker: {
+        size: sample_values,
+        color: otu_ids,
+        colorscale: "Earth"
+      }
+    }];
+  
     // Render the Bubble Chart
-
+    plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
-
+    
 
     // Build a Bar Chart
     // Don't forget to slice and reverse the input data appropriately
@@ -52,8 +80,8 @@ function buildCharts(sample) {
 }
 
 // Function to run on page load
-function init() {
-  d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
+//function init() {
+ // d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // Get the names field
 
@@ -71,14 +99,14 @@ function init() {
 
     // Build charts and metadata panel with the first sample
 
-  });
-}
+  //});
+//}
 
 // Function for event listener
-function optionChanged(newSample) {
+//function optionChanged(newSample) {
   // Build charts and metadata panel each time a new sample is selected
 
-}
+//}
 
 // Initialize the dashboard
-init();
+//init();
