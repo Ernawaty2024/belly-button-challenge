@@ -45,8 +45,8 @@ function buildCharts(sample) {
       hovermode: "closest",
       xaxis: {title : "OTU ID"},
       yaxis: {title: "Number of Bacteria"},
-      height: 600,
-      width : 800
+      height: 500,
+      width : 1050
     };
 
     let bubbleData = [{
@@ -79,7 +79,7 @@ function buildCharts(sample) {
     
     let barLayout = {
       title: "Top 10 Bacteria Cultures Found",
-      height : 600,
+      height : 450,
       width : 800,
       xaxis: {title:"Number of Bacteria"}
     };
