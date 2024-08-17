@@ -28,7 +28,7 @@ In this project, we will create an interactive dashboard to explore the Belly Bu
 
 
 ## Usage
-- Clone the repository:
+- Clone the repository
 
 ## Dependencies
 - D3.js
